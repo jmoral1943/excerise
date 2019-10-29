@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -11,7 +10,7 @@ import (
 	"strings"
 )
 
-//var xi []map[string][]string
+var xi []map[string][]string
 
 // Scans the file and searches for imports
 func scanFile(f string) {
@@ -36,6 +35,7 @@ func scanFile(f string) {
 
 		if importPresent {
 			s := strings.TrimSpace(scanner.Text())
+			s = strings.Trim(s, `""`)
 			imp = append(imp, s)
 		}
 
@@ -46,10 +46,11 @@ func scanFile(f string) {
 			s = strings.Split(str, "(")
 			str =  strings.Join(s, "")
 			str = strings.TrimSpace(str)
+			str = strings.Trim(str, `""`)
 			imp = append(imp, str)
 		}
 	}
-	fmt.Println(imp)
+	//fmt.Println(imp)
 	toJson(filepath.Base(f), imp)
 }
 
@@ -57,15 +58,8 @@ func toJson(f string, imp [] string) {
 	 m := map[string][]string {
 	 	f: imp,
 	 }
-	 //xi = append(xi, m)
-	js, err := json.MarshalIndent(m, "", "\t")
-	j, err := json.MarshalIndent(m, "", "\t")
-	js = append(js, j...)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	 fmt.Println(string(js))
+	 xi = append(xi, m)
+	 //fmt.Println("this statement",string(js))
 }
 
 func listFiles(f string) {
@@ -86,7 +80,28 @@ func listFiles(f string) {
 		log.Println(err)
 	}
 }
+
+func writeToFile()  error {
+	js, err := json.MarshalIndent(xi, "", "\t")
+	if err != nil {
+		log.Fatal(err)
+	}
+	file, err := os.Create("imports.json")
+	if err != nil  {
+		return err
+	}
+	defer file.Close()
+
+	file.Write(js)
+
+	return nil
+}
+
 func main() {
 	 listFiles(os.Args[1])
+	 err := writeToFile()
+	 if err != nil {
+	 	log.Fatal(err)
+	 }
 	//"../paperspace-project"
 }
