@@ -41,6 +41,11 @@ func scanFile(f string) {
 
 		if strings.Contains(scanner.Text(), "import") {
 			importPresent = true;
+
+			if strings.Contains(scanner.Text(), "(") {
+				continue
+			}
+
 			s := strings.Split(scanner.Text(), "import")
 			str := strings.Join(s, "")
 			s = strings.Split(str, "(")
@@ -48,9 +53,10 @@ func scanFile(f string) {
 			str = strings.TrimSpace(str)
 			str = strings.Trim(str, `""`)
 			imp = append(imp, str)
+			importPresent = false
 		}
 	}
-	//fmt.Println(imp)
+
 	toJson(filepath.Base(f), imp)
 }
 
@@ -59,7 +65,6 @@ func toJson(f string, imp [] string) {
 	 	f: imp,
 	 }
 	 xi = append(xi, m)
-	 //fmt.Println("this statement",string(js))
 }
 
 func listFiles(f string) {
@@ -103,5 +108,5 @@ func main() {
 	 if err != nil {
 	 	log.Fatal(err)
 	 }
-	//"../paperspace-project"
+	//"./paperspace-project"
 }
