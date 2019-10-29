@@ -40,7 +40,7 @@ func scanFile(f string) {
 		}
 
 		if strings.Contains(scanner.Text(), "import") {
-			importPresent = true;
+			importPresent = true
 
 			if strings.Contains(scanner.Text(), "(") {
 				continue
@@ -49,7 +49,7 @@ func scanFile(f string) {
 			s := strings.Split(scanner.Text(), "import")
 			str := strings.Join(s, "")
 			s = strings.Split(str, "(")
-			str =  strings.Join(s, "")
+			str = strings.Join(s, "")
 			str = strings.TrimSpace(str)
 			str = strings.Trim(str, `""`)
 			imp = append(imp, str)
@@ -60,11 +60,11 @@ func scanFile(f string) {
 	toJson(filepath.Base(f), imp)
 }
 
-func toJson(f string, imp [] string) {
-	 m := map[string][]string {
-	 	f: imp,
-	 }
-	 xi = append(xi, m)
+func toJson(f string, imp []string) {
+	m := map[string][]string{
+		f: imp,
+	}
+	xi = append(xi, m)
 }
 
 func listFiles(f string) {
@@ -86,27 +86,29 @@ func listFiles(f string) {
 	}
 }
 
-func writeToFile()  error {
+func writeToFile() error {
 	js, err := json.MarshalIndent(xi, "", "\t")
 	if err != nil {
 		log.Fatal(err)
 	}
 	file, err := os.Create("imports.json")
-	if err != nil  {
+	if err != nil {
 		return err
 	}
 	defer file.Close()
 
-	file.Write(js)
-
+	_, err = file.Write(js)
+	if err != nil {
+		log.Fatal(err)
+	}
 	return nil
 }
 
 func main() {
-	 listFiles(os.Args[1])
-	 err := writeToFile()
-	 if err != nil {
-	 	log.Fatal(err)
-	 }
+	listFiles(os.Args[1])
+	err := writeToFile()
+	if err != nil {
+		log.Fatal(err)
+	}
 	//"./paperspace-project"
 }
