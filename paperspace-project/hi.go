@@ -8,6 +8,8 @@ import (
 	"regexp"
 )
 
+import "how"
+
 func main() {
 	err := filepath.Walk(".",
 		func(path string, info os.FileInfo, err error) error {
